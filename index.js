@@ -1,36 +1,29 @@
 const express = require('express');
 const AWS = require('aws-sdk');
-const {getSignedUrl}= require('@aws-sdk/cloudfront-signer')
-
 const app = express();
-const port = 3000;
+require('dotenv').config();
+const {CLOUDFRONT_DOMAIN, ACCESS_KEY_ID, SECRET_ACCESS_KEY, IMAGE_FILE_KEY, CLOUDFRONT_PRIVATE_KEY, CLOUDFRONT_KEY_PAIR_ID, AWS_REGION}=process.env
 
-// Configure AWS SDK with your credentials
 AWS.config.update({
-  accessKeyId: process.env.ACCESS_KEY_ID,
-  secretAccessKey: process.env.SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
+  accessKeyId:ACCESS_KEY_ID,
+  secretAccessKey: SECRET_ACCESS_KEY,
+  region: AWS_REGION,
 });
 
-const cloudFront = new AWS.CloudFront();
+// Instance of the AWS CloudFront signer
+const signer = new AWS.CloudFront.Signer(CLOUDFRONT_KEY_PAIR_ID, CLOUDFRONT_PRIVATE_KEY);
 
 app.get('/', (req, res) => {
-  const params = {
-    url: `https://${process.env.CLOUDFRONT_DOMAIN}/${process.env.IMAGE_FILE_KEY}`,
-    expires: Math.floor((Date.now() + 300000) / 1000), // Expiry time in seconds (5 minutes)
-  };
-
-  cloudFront.getSignedUrl(params, (err, url) => {
-    if (err) {
-      console.error('Error generating signed URL:', err);
-      res.status(500).send('Error generating signed URL');
-    } else {
-      console.log('Signed URL:', url);
-      res.send('Signed URL generated. Check the console for the URL.');
-    }
+  const signedUrl = signer.getSignedUrl({
+    url: `${CLOUDFRONT_DOMAIN}/${IMAGE_FILE_KEY}`, 
+    expires: Math.floor((Date.now() + 5 * 60 * 1000) / 1000),
   });
+
+  console.log('Signed URL:', signedUrl);
+
+  res.send('Signed URL generated. Check the console for the signed URL.');
 });
 
-app.listen(port, () => {
-  console.log(`Express server running on port ${port}`);
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
