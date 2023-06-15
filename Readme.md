@@ -18,13 +18,13 @@ Before running the application, make sure you have the following environment var
 
 1. Clone this repository and navigate to the project directory.
 
-2. Install the dependencies by running the following command: npm install
+2. Install the dependencies by running the following command: `npm install`
 
 3. Create a `.env` file in the project directory and set the required environment variables as described in the Prerequisites section.
 
 ## Usage
 
-1. Start the application by running the following command: node index.js
+1. Start the application by running the following command: `node index.js`
 
 2. Access the application in your browser at `http://localhost:3000`.
 
