@@ -40,7 +40,6 @@ app.get("/signed-url", (req, res) => {
   const signedUrl = signer.getSignedUrl({
     url: `${CLOUDFRONT_DOMAIN}/${IMAGE_FILE_KEY}`,
     expires: expiryTimestamp,
-    // keyGroupIds: "ac3be8aa-7e23-4aa0-8fbc-33c87635dee0",
   });
   console.log("Signed URL:", signedUrl);
   res.send(
